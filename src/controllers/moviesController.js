@@ -9,25 +9,24 @@ const { Op } = require("sequelize");
 // const {Movies,Genres,Actor} = require('../database/models');
 
 //Aquí tienen otra forma de llamar a los modelos creados
-const Movies = db.Movie;
-const Genres = db.Genre;
-const Actors = db.Actor;
+
 
 
 const moviesController = {
     'list': (req, res) => {
-        db.Movie.findAll()
+        db.Movie.findAll({
+            include:['genre'],
+        })
             .then(movies => {
-                res.render('moviesList.ejs', {movies})
+                return res.render('moviesList.ejs', {movies})
             })
     },
     'detail': (req, res) => {
         db.Movie.findByPk(req.params.id,{
-            include : ['genre']
+            include : ['genre','actors']
         })
             .then(movie => {
-                /* return res.send(movie) */
-                res.render('moviesDetail.ejs', {movie});
+                return res.render('moviesDetail.ejs', {movie});
             });
     },
     'new': (req, res) => {
@@ -56,12 +55,21 @@ const moviesController = {
     },
     //Aqui dispongo las rutas para trabajar con el CRUD
     add: function (req, res) {
-        db.Genre.findAll({
+        const genres = db.Genre.findAll({
             order : ['name']
         })
-            .then(allGenres =>{
+        const actors = db.Actor.findAll({
+            order : [
+                ['first_name'],
+                ['last_name']
+            ]
+        })
+
+        Promise.all([genres,actors])
+            .then(([genres,actors]) =>{
                 return res.render('moviesAdd',{
-                    allGenres
+                    genres,
+                    actors
                 })
             })
             .catch(error => console.log(error))
@@ -87,23 +95,33 @@ const moviesController = {
     },
     edit: function(req,res) {
 
-        const allGenres = db.Genre.findAll({
+        const genres = db.Genre.findAll({
             order : ['name']
         })
 
-        const movie = db.Movie.findByPk(req.params.id)
+        const movie = db.Movie.findByPk(req.params.id,{
+            include : ['actors']
+        })
 
-        Promise.all([movie,allGenres])
-            .then(([movie,allGenres]) => {
+        const actors = db.Actor.findAll({
+            order : [
+                ['first_name'],
+                ['last_name']
+            ]
+        });
+
+        Promise.all([movie,genres,actors])
+            .then(([movie,genres,actors]) => {
                 return res.render('moviesEdit', {
-                    Movie: movie,
-                    allGenres,
-                    moment
+                    Movie:movie,
+                    moment,
+                    genres,
+                    actors
                 })
             }).catch(error => console.log(error))
     },
     update: function (req,res) {
-        const { title, rating, awards, length, release_date , genre_id} = req.body
+        const { title, rating, awards, length, release_date , genre_id,actors} = req.body
         db.Movie.update(
             {
                 title: title.trim(),

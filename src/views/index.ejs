@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/css/style.css' />
-  </head>
+  <%- include ('./partials/head', {
+    title : 'HOME'
+}) %>
   <body>
     <figure>
       <img src="/img/logo-DH.png" alt="Logo Digital House">
@@ -11,5 +10,6 @@
     <h1><%= title %></h1>
     <p>Bienvenidos a <%= title %></p>
     <p><a href="/movies">Listado de Películas</a></p>
+    <%- include ('./partials/scripts') %>
   </body>
 </html>
