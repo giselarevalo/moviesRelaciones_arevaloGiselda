@@ -1,34 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Listado de Películas</title>
-    <link rel='stylesheet' href='/css/style.css' />
-
-</head>
+<%- include ('./partials/head', {
+    title : 'Lista'
+}) %>
 
 <body>
     <figure>
         <img src="/img/logo-DH.png" alt="Logo Digital House">
     </figure>
     <h1>LISTADO DE PELÍCULAS</h1>
-    <br>
-    <p>
-        <a class="botonAgregar" href="/movies/add">Agregar una Pelicula</a>
-        <a class="botonVolver" href="/">inicio</a>
 
-    </p>
-    <br>
-    <ul>
-        <% for( let i = 0; i < movies.length; i++ ) { %>
-        <li>
-            <a href="/movies/detail/<%= movies[i].id %>"><%= movies[i].title %></a>
-        </li>
-        <% } %>
+     <!-- -------------------------------------------------------------------- -->
+     <main class="container">
+        <div class="row mt-5">
+            <div class="col-12 col-md-12  mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Peliculas</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="tab-content " id="nav-tabContent">
+                            <!-- PELICULAS -->
+                            <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                                aria-labelledby="nav-home-tab" tabindex="0">
+                                <div class="d-flex flex-column flex-md-row gap-2 justify-content-between  my-3">
+                                    <a href="/movies/add" class="btn btn-dark"><i class="fas fa-plus"></i>Nueva película</a>
+                                </div>
+                                <!-- tabla -->
+                                <div class="table-responsive">
+                                    
+                                    <table class="table table-striped ">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Titulo</th>
+                                            <th scope="col">Rating</th>
+                                            <th scope="col">Premios</th>
+                                            <th scope="col">Género</th>
+                                            <th scope="col">Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <% let counter = 1; %>
+                                            <% movies.forEach(({id,title,genre_id,rating,awards}) => { %>
+                                                <tr>
+                                                    <th scope="row"><%= counter %></th>
+                                                    <td><%=title%></td>
+                                                    <td><%=rating%></td>
+                                                    <td><%=awards%></td>
+                                                    <td><%= genre_id ?genre_id : 'sin  especificar'%></td>
+                                        
+                                                    <td>
+                                                        <div class="d-flex gap-2">
+                                                         
+                                                        <!-- Modal -->
+                                                            <a href="/movies/detail/<%= id %>" class="btn btn-sm btn-primary"><i class="fas fa-eye"></i></a>
+                                                            <a href="/movies/edit/<%= id %>" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></a>
 
-    </ul>
+                                                           
+                                                        </div>
+                                                    </td>
+                                                </tr>                                                                
+                                                <% counter++; %>
+                                            <% }) %>
+                                        
+                                        </tbody>
+                                    </table>
+                                </div>    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <%- include ('./partials/scripts') %>
 </body>
 
 </html>

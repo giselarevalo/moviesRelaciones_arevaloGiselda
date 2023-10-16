@@ -57,9 +57,34 @@
         </div>
         <section>
         <!--Aquí debe colocar los botones de Modificar - Borrar y Listado de Películas-->
-            <a class="botonAgregar" href="/movies/edit/<%= movie.id %>">Editar Pelicula</a>
+            <a class="btn btn-success" href="/movies/edit/<%= movie.id %>">Editar Pelicula</a>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#movie<%= movie.id %>">
+                <i class="fas fa-trash"></i>
+            </button>
         </section>
+        
+        <!-- modal -->
+        <div class="modal" tabindex="-1" id="movie<%= movie.id %>">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Advertencia</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h5>Estas seguro que queres eliminar la pelicula <b><%= movie.title %></b>???</h5>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <form action="/movies/delete/<%= movie.id %>?_method=DELETE" method="POST">
+                            <button class="btn btn-outline-danger" type="submit">Eliminar</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+   
     
 <%- include ('./partials/scripts') %>
 </body>

@@ -20,9 +20,9 @@
         </div>
     
         <div class="card-body">
-            <form action="/movies/update/<%= Movie.id %>" class="row" method="POST">
+            <form action="/movies/update/<%= Movie.id %>?_method=PUT" class="row" method="POST">
                 <div class="mb-3 col-12 col-md-3">
-                    <label class="form-label" for="title">Title </label>
+                    <label class="form-label" for="title">Título </label>
                     <input class="form-control"  type="text" name="title" id="" value="<%= Movie.title %>" required>
                 </div>
                 <div class="mb-3 col-12 col-md-3">
@@ -30,22 +30,22 @@
                     <input  class="form-control" type="number" name="rating" id="" value="<%= Movie.rating %>" required>
                 </div>
                 <div class="mb-3 col-12 col-md-3">
-                    <label class="form-label" for="awards">Awards </label>
+                    <label class="form-label" for="awards">Premios </label>
                     <input  class="form-control" type="number" name="awards" id="" value="<%= Movie.awards %>" required>
     
                 </div>
                 <div class="mb-3 col-12 col-md-3">
-                    <label class="form-label" for="release_date">Release date </label>
+                    <label class="form-label" for="release_date">Fecha de estreno </label>
                     <input  class="form-control" type="date" name="release_date" id="" value="<%= moment(Movie.release_date).format('YYYY-MM-DD') %>">
                 </div>
                 <div class="mb-3 col-12 col-md-3">
-                    <label class="form-label" for="length">Length </label>
-                    <input  class="form-control" type="number" name="length" id="" value="<%= Movie.length %>" required>
+                    <label class="form-label" for="length">Duración </label>
+                    <input  class="form-control" type="number" name="length" id="length" value="<%= Movie.length %>" required>
     
                 </div>
                 <div class="mb-3 col-12 col-md-3">
                     <label class="form-label" for="genre_id">Genero </label>
-                    <select class="form-control" name="genre_id" id="" required>
+                    <select class="form-control" name="genre_id" id="genre_id" required>
                         <% genres.forEach(genre => { %>
                             <option value="<%= genre.id %>" <% if (Movie.genre_id == genre.id) { %><%= 'selected' %><% }; %>><%= genre.name %></option>
                         <% }); %>
@@ -58,12 +58,12 @@
                 
                <div class="mb-3 col-12 ">
                     <div class="row">
-                        <label for="">Actores</label>
+                        <label for="actors">Actores</label>
                         <% actors.forEach(actor => { %>
                             <div class="col-12 col-md-3">
                                 <div class="form-check">
-                                    <input name="actors" class="form-check-input" type="checkbox" <%= Movie.actors.map(actor=> actor.id).includes(actor.id) && 'checked'  %> value="<%= actor.id %>" id="flexCheckDefault">
-                                    <label class="form-check-label" for="actor<%= actor.id %>">
+                                    <input name="actors" class="form-check-input" type="checkbox" <%= Movie.actors.map(actor=> actor.id).includes(actor.id) && 'checked'  %> value="<%= actor.id %>" id="actor<%= actor.id %>">
+                                    <label class="form-check-label" for="actor<%= actor.id %>" name="actors">
                                         <%= actor.first_name %> <%= actor.last_name %> 
                                     </label>
                                 </div>

@@ -3,6 +3,7 @@ const db = require('../database/models');
 const sequelize = db.sequelize;
 const moment = require('moment')
 const { Op } = require("sequelize");
+const { truncate } = require('fs');
 
 
 //Aqui tienen una forma de llamar a cada uno de los modelos
@@ -13,6 +14,7 @@ const { Op } = require("sequelize");
 
 
 const moviesController = {
+
     'list': (req, res) => {
         db.Movie.findAll({
             include:['genre'],
@@ -121,7 +123,8 @@ const moviesController = {
             }).catch(error => console.log(error))
     },
     update: function (req,res) {
-        const { title, rating, awards, length, release_date , genre_id,actors} = req.body
+        let { title, rating, awards, length, release_date , genre_id,actors} = req.body;
+        actors = typeof actors == 'string' ? [actors] : actors
         db.Movie.update(
             {
                 title: title.trim(),
@@ -129,8 +132,7 @@ const moviesController = {
                 awards,
                 length,
                 release_date,
-                genre_id
-
+                genre_id,
             },
             {
                 where: {
@@ -140,15 +142,63 @@ const moviesController = {
             }
             ).then((response) => {
                 console.log(response);
-                return res.redirect('/movies/detail/'+ req.params.id)
-            }).catch(error => console.log(error))
+                db.Actor_Movie.destroy({
+                    where:{
+                        movie_id : req.params.id
+                    }
+                })
+                    .then(()=>{
+                        if(actors){
+                            const actorsDB = actors.map(actor => {
+                                return{
+                                    movie_id: req.params.id,
+                                    actor_id: actor
+                                }
+                            })
+                            db.Actor_Movie.bulkCreate(actorsDB,{
+                                validate : true
+                            })
+                                .then(()=>{
+                                    console.log(response)
+                                })
+                        }
+                    })
+                
+            })
+            .catch(error => console.log(error))
+            .finally(()=> res.redirect('/movies/detail/'+ req.params.id))
 
-    },
-    delete: function (req,res) {
 
     },
     destroy: function (req,res) {
 
+        db.Actor_Movie.destroy({
+            where :{
+                movie_id : req.params.id
+            }
+        })
+            .then(()=>{
+
+                db.Actor.update(
+                    {
+                        favorite_movie_id : null
+                    },
+                    {
+                        where:{
+                            favorite_movie_id : req.params.id
+                        }
+                    }
+
+                ).then(()=>{
+                    db.Movie.destroy({
+                        where:{
+                            id:req.params.id
+                        }
+                    }).then(()=>{
+                        return res.redirect('/movies')
+                    })
+                })
+            }).catch(error=> console.log(error))
     }
 }
 
